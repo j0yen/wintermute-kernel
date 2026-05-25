@@ -1,0 +1,7 @@
+src/
+pkg/
+*.tar.*
+*.zst
+*.sig
+*.sign
+*.pkg.tar.zst
