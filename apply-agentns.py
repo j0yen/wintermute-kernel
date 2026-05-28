@@ -57,12 +57,21 @@ def replace_once(path: Path, *, old: str, new: str, skip_if: str = None) -> None
 def main(root: Path) -> None:
     print(f"==> Applying agentns inline edits to {root}")
 
-    # 0001 — CLONE_NEWAGENT bit
+    # 0001 — CLONE_NEWAGENT bit.
+    #
+    # MUST be a 64-bit value. Bits 0x80..0x80000000 are fully claimed by
+    # upstream (CSIGNAL through CLONE_IO); CLONE_CLEAR_SIGHAND/INTO_CGROUP
+    # already live above bit 32. The original 0x00000100 silently aliased
+    # CLONE_VM, so every kthread (kthreadd, kworkers) was inadvertently
+    # requesting a new agent NS — copy_agent_ns ran before agent_ns_cache
+    # existed and the kernel hung on the firmware splash with no console
+    # output (boot attempts 2026-05-25). Use 0x400000000ULL — next free
+    # above CLONE_INTO_CGROUP. Reachable only via clone3(2).
     edit(
         root / "include/uapi/linux/sched.h",
         after="#define CLONE_IO\t\t0x80000000",
-        insert="\n#define CLONE_NEWAGENT\t\t0x00000100\t/* New agent namespace (wintermute vendor) */\n",
-        skip_if="CLONE_NEWAGENT",
+        insert="\n#define CLONE_NEWAGENT\t\t0x400000000ULL\t/* New agent namespace (wintermute vendor) */\n",
+        skip_if="0x400000000ULL\t/* New agent namespace",
     )
 
     # 0002 — nsproxy forward decl + field + #include + init + copy + free

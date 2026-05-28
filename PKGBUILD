@@ -5,7 +5,7 @@
 
 pkgbase=linux-wintermute
 pkgver=7.0.10.arch1
-pkgrel=1
+pkgrel=5
 pkgdesc='Linux (wintermute: agentns + memlog + provfs LSM)'
 url='https://github.com/j0yen/wintermute-kernel'
 arch=(x86_64)
@@ -31,7 +31,7 @@ b2sums=('08dc26e2247186fbfee32ee3251174f8a2e68c6ed6118c0713cb87bb66d427c85b6ae23
         'SKIP'
         '0701e826f811a79123f89c0d034cb753d3a6237ee5e387c8c927efc1114dbeac6ef095e88eedecf18b9d69fcefa605b2425ffb119c5e40026e388464f75c350e'
         'SKIP')
-b2sums_x86_64=('9a8ec4b0411ff9ac6fb33eaa4999eaf4b8ba9af407fa3c9d3c35722427c66c52042b2c1d136edbb27ead16f05f825bfb86d78a22c3177c98acdfdd7936a71575')
+b2sums_x86_64=('7cfb1d47ea2ea1568934f2c6765d5d095f521cd7ca5e141941bd27ce8f6859c16ebdcd2fc9760f4953cf31f52daa9dd50aecee1f7af771c77ddb70131e260a5c')
 sha256sums=('094977eb62c20e3d1939fe81a92958a1f987f339446e532fa86963b2804e32dc'
             'SKIP'
             '5aa17c8f41de0cfe212cdbaf97be5cddf304f08bd558b6763c41611cd73c3698'
