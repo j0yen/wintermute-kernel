@@ -5,3 +5,4 @@ pkg/
 *.sig
 *.sign
 *.pkg.tar.zst
+build.log*

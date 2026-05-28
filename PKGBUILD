@@ -5,11 +5,12 @@
 
 pkgbase=linux-wintermute
 pkgver=7.0.10.arch1
-pkgrel=5
+pkgrel=6
 pkgdesc='Linux (wintermute: agentns + memlog + provfs LSM)'
 url='https://github.com/j0yen/wintermute-kernel'
 arch=(x86_64)
 license=(GPL-2.0-only)
+install=linux-wintermute.install
 makedepends=(
   bc binutils cpio gettext glibc libelf libgcc openssl pahole perl python
   rust rust-bindgen rust-src tar xxhash xz zlib zstd
@@ -20,6 +21,9 @@ _srctag=v${pkgver%.*}-${pkgver##*.}
 source=(
   https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
   https://github.com/archlinux/linux/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
+  linux-wintermute.install
+  linux-wintermute-memlog.sysusers
+  linux-wintermute-memlog.rules
 )
 source_x86_64=(config.x86_64)
 validpgpkeys=(
@@ -30,12 +34,18 @@ validpgpkeys=(
 b2sums=('08dc26e2247186fbfee32ee3251174f8a2e68c6ed6118c0713cb87bb66d427c85b6ae2367af053b158d9ad0d9aaf0846bdebddf84c30558fec89e68ba0dc0957'
         'SKIP'
         '0701e826f811a79123f89c0d034cb753d3a6237ee5e387c8c927efc1114dbeac6ef095e88eedecf18b9d69fcefa605b2425ffb119c5e40026e388464f75c350e'
-        'SKIP')
+        'SKIP'
+        'd1525c206e6abe93f4bdd101d2b41e5fbde75c18b074e3975179c822a7cbfd8f78342b91ce44bc44e98568415f512b166c78a7fa24babf5befc72dd39a95132f'
+        '31fd570a7b6d9c28cb1417ce22fd54c26f71213e945e622712dd5479866332cac18896da8959bc94d08601ca0c0e8250e6e965b139edf068fddff1c289f0ca73'
+        '2d8a304770c8116b0c08da40bf08ed1a000b7dbb2fb88eadcf0fed8e270f154e8a3f2e5044cff31283f828e39effb00aa14cb9dce8e89d67ea47ef733731f3c6')
 b2sums_x86_64=('7cfb1d47ea2ea1568934f2c6765d5d095f521cd7ca5e141941bd27ce8f6859c16ebdcd2fc9760f4953cf31f52daa9dd50aecee1f7af771c77ddb70131e260a5c')
 sha256sums=('094977eb62c20e3d1939fe81a92958a1f987f339446e532fa86963b2804e32dc'
             'SKIP'
             '5aa17c8f41de0cfe212cdbaf97be5cddf304f08bd558b6763c41611cd73c3698'
-            'SKIP')
+            'SKIP'
+            'd9027137453def867b73a436b104b0ce95a69fabb78feb3b33db138592c9bfbc'
+            '76526cd4a06d74672eefd4da4ce23e80f1fe303b1a03e057008c5dbc43e1e4c5'
+            '9a9852c207a1c014fb5d2cb19dd98fdc2c01f3a0e903f5508e7d614eba0cc282')
 
 # Source dirs for our three changesets (absolute paths to the local repos).
 # Override via env if your wintermute checkout lives elsewhere.
@@ -151,6 +161,12 @@ _package() {
   ZSTD_CLEVEL=19 make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
     DEPMOD=/doesnt/exist modules_install
   rm "$modulesdir"/build
+
+  echo "Installing memlog sysusers + udev rule..."
+  install -Dm644 "${srcdir}/linux-wintermute-memlog.sysusers" \
+    "${pkgdir}/usr/lib/sysusers.d/linux-wintermute-memlog.conf"
+  install -Dm644 "${srcdir}/linux-wintermute-memlog.rules" \
+    "${pkgdir}/usr/lib/udev/rules.d/70-linux-wintermute-memlog.rules"
 }
 
 _package-headers() {

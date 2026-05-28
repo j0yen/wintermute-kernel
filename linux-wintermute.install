@@ -1,0 +1,22 @@
+post_install() {
+  echo "==> linux-wintermute: created /usr/lib/sysusers.d/linux-wintermute-memlog.conf"
+  echo "    Run \`systemd-sysusers\` to materialize the 'memlog' group now,"
+  echo "    or it will be created on the next boot."
+  echo
+  echo "==> To consume /dev/memlog as a non-root user:"
+  echo "      sudo usermod -aG memlog <user>"
+  echo "    and start a new login session."
+  echo
+  echo "==> Reboot to load the new kernel image."
+}
+
+post_upgrade() {
+  # Idempotent — sysusers/udev re-installation is handled by pacman.
+  echo "==> linux-wintermute: package upgraded; reboot to load new kernel."
+}
+
+post_remove() {
+  echo "==> linux-wintermute: removed."
+  echo "    The 'memlog' group is left in place (used by no other package"
+  echo "    in this PKGBUILD; remove manually with: sudo groupdel memlog)."
+}

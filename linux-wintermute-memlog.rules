@@ -1,0 +1,1 @@
+KERNEL=="memlog", GROUP="memlog", MODE="0640"
