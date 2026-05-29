@@ -6,3 +6,4 @@ pkg/
 *.sign
 *.pkg.tar.zst
 build.log*
+makepkg-*.log

@@ -163,6 +163,13 @@ _package() {
   rm "$modulesdir"/build
 
   echo "Installing memlog sysusers + udev rule..."
+  # makepkg -e (--noextract) skips source staging, so local source= assets are
+  # never linked into $srcdir. Stage them from $startdir if absent so incremental
+  # -e repackages succeed the same as a from-scratch build. (root-cause fix for
+  # the recurring pkgrel-6 package() failure, 2026-05-29)
+  for _asset in linux-wintermute-memlog.sysusers linux-wintermute-memlog.rules; do
+    [[ -e "${srcdir}/${_asset}" ]] || cp "${startdir}/${_asset}" "${srcdir}/${_asset}"
+  done
   install -Dm644 "${srcdir}/linux-wintermute-memlog.sysusers" \
     "${pkgdir}/usr/lib/sysusers.d/linux-wintermute-memlog.conf"
   install -Dm644 "${srcdir}/linux-wintermute-memlog.rules" \
